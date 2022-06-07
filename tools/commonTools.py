@@ -23,7 +23,8 @@ def extractWSFileNames( _inputWSDir ):
 def extractListOfProcs( _listOfWSFileNames ):
   procs = []
   for fName in _listOfWSFileNames:
-    p = fName.split("pythia8_")[1].split(".root")[0]
+    # p = fName.split("pythia8_")[1].split(".root")[0]
+    p = fName.split("output_")[1].split("_")[0]
     if p not in procs: procs.append(p)
   return ",".join(procs)
 
@@ -62,10 +63,12 @@ def containsNOTAG( _listOfWSFileNames ):
   allData = ws.allData()
   for d in allData:
     if "NOTAG" in d.GetName(): return True
+    if "NoTag" in d.GetName(): return True
   return False
 
 # Function to return signal production (and decay extension if required) from input file name
 def signalFromFileName(_fileName):
+  print(_fileName)
   p, d = None, None
   if "ggZH" in _fileName:
     p = "ggzh"
@@ -80,6 +83,19 @@ def signalFromFileName(_fileName):
   elif "THQ" in _fileName: p = "thq"
   elif "THW" in _fileName: p = "thw"
   elif "bbH" in _fileName: p = "bbh"
+  elif "ggzh" in _fileName:
+    p = "ggzh"
+    if "ztoll" in _fileName: d = "_ZToLL"
+    elif "ztonunu" in _fileName: d = "_ZToNuNu"
+    else: d = "_ZToQQ"
+  elif "ggh" in _fileName: p = "ggh"
+  elif "vbf" in _fileName: p = "vbf"
+  elif "wh" in _fileName: p = "wh"
+  elif "zh" in _fileName: p = "zh"
+  elif "tth" in _fileName: p = "tth"
+  elif "thq" in _fileName: p = "thq"
+  elif "thw" in _fileName: p = "thw"
+  elif "bbh" in _fileName: p = "bbh"
   else:
     print " --> [ERROR]: cannot extract production mode from input file name. Please update tools.commonTools.signalFromFileName"
     exit(1)
