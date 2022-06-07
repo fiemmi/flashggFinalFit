@@ -36,7 +36,10 @@ if opt.inputConfig != '':
     _cfg = backgroundScriptCfg
 
     #Extract options
-    options['dataFile']     = "%s/allData.root"%_cfg['inputWSDir']
+#    options['dataFile']     = "%s/allData.root"%_cfg['inputWSDir']
+    options['dataFile']     = "%s/DataUL2017_4Untag.root"%_cfg['inputWSDir'] #JTao
+#    options['dataFile']     = "%s/DataUL2017_UntagVBF.root"%_cfg['inputWSDir'] #JTao Unatg+VBF
+#    options['dataFile']     = "%s/DataUL2017_UntagVBF_TaoCats.root"%_cfg['inputWSDir'] #JTao Unatg+VBF: EB+EB, !(EB+EB)
     options['cats']         = _cfg['cats']
     options['catOffset']    = _cfg['catOffset']
     options['ext']          = _cfg['ext']
