@@ -91,6 +91,7 @@ if cats == 'auto':
   for tn in listOfTreeNames:
     if "sigma" in tn: continue
     elif "NOTAG" in tn: continue
+    elif "NoTag" in tn: continue  #JTao
     elif "ERROR" in tn: continue
     c = tn.split("_%s_"%sqrts__)[-1].split(";")[0]
     cats.append(c)
