@@ -3,7 +3,7 @@
 signalScriptCfg = {
   
   # Setup
-  'inputWSDir':'/eos/cms/store/user/jtao/MassInterference/CMSSW_10_6_8/wssig/', 
+  'inputWSDir':'/eos/user/f/fiemmi/Hgg/MassMeasurement/wssig/', 
   'procs':'ggh,vbf,tth,wh,zh,thw,thq', # if auto: inferred automatically from filenames
   'cats':'auto', # if auto: inferred automatically from (0) workspace
   'ext':'MassTest_UL2017',
