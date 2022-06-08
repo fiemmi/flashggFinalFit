@@ -106,7 +106,7 @@ def writeSubFiles(_opts):
       # Extract list of ws files
       wsfiles = glob.glob("%s/*.root"%_opts['inputDir'])
       # Separate submission per ws file
-      for fidx,f in enumerate(wsfiles):
+      for tfidx,f in enumerate(wsfiles):
         _f.write("if [ $1 -eq %g ]; then\n"%tfidx)
         # Add command per target mass
         for tm in _opts['targetMasses'].split(","):
