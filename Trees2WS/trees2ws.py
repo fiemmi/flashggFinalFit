@@ -122,6 +122,7 @@ if cats == 'auto':
   for tn in listOfTreeNames:
     if "sigma" in tn: continue
     elif "NOTAG" in tn: continue
+    elif "NoTag" in tn: continue
     elif "ERROR" in tn: continue
     c = tn.split("_%s_"%sqrts__)[-1].split(";")[0]
     cats.append(c)
@@ -131,7 +132,8 @@ if opt.doNOTAG:
   for tn in listOfTreeNames:
     if "sigma" in tn: continue
     if "NOTAG" in tn: cats.append("NOTAG")
-  if "NOTAG" not in cats:
+    elif "NoTag" in tn: cats.append("NoTag")
+  if "NOTAG" not in cats and "NoTag" not in cats:
     print " --> [WARNING] NOTAG tree does not exist in input file. Not including NOTAG"
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -162,7 +164,7 @@ for cat in cats:
     dfs[ts].columns = tsColumns
 
   # Main variables to add to nominal RooDataSets
-  dfs['main'] = t.pandas.df(mainVars) if cat!='NOTAG' else t.pandas.df(notagVars)
+  dfs['main'] = t.pandas.df(mainVars) if cat!='NOTAG' and cat!='NoTag' else t.pandas.df(notagVars)
 
   # Concatenate current dataframes
   df = pandas.concat(dfs.values(), axis=1)
@@ -171,21 +173,14 @@ for cat in cats:
   if opt.doSTXSSplitting: df[stxsVar] = t.pandas.df(stxsVar)
 
   # For NOTAG: fix extract centralObjectWeight from theory weights if available
-  if cat == 'NOTAG':
+  if cat == 'NOTAG' or cat == 'NoTag':
     df['type'] = 'NOTAG'
-    if opt.doNNLOPS:
-      if opt.productionMode == 'ggh':
-        if 'THU_ggH_VBF2jUp01sigma' in df:
-          df['centralObjectWeight'] = df.apply(lambda x: 0.5*(x['THU_ggH_VBF2jUp01sigma']+x['THU_ggH_VBF2jDown01sigma']), axis=1)
-          df['NNLOPSweight'] = df.apply(lambda x: 0.5*(x['THU_ggH_VBF2jUp01sigma']+x['THU_ggH_VBF2jDown01sigma']), axis=1)
-        else:
-          df['centralObjectWeight'] = 1.
-          df['NNLOPSweight'] = 1.
-      else:
-        df['centralObjectWeight'] = 1.
-        df['NNLOPSweight'] = 1.
-    else:
-      if "centralObjectWeight" in mainVars: df['centralObjectWeight'] = 1.
+    if "centralObjectWeight" in mainVars: 
+      if 'THU_ggH_qmtopUp01sigma' in df: df['centralObjectWeight'] = df.apply(lambda x: 0.5*(x['THU_ggH_qmtopUp01sigma']+x['THU_ggH_qmtopDown01sigma']), axis=1)
+      else: df['centralObjectWeight'] = 1.
+    if opt.doNNLOPS: 
+      if 'THU_ggH_qmtopUp01sigma' in df: df['NNLOPSweight'] = df.apply(lambda x: 0.5*(x['THU_ggH_qmtopUp01sigma']+x['THU_ggH_qmtopDown01sigma']), axis=1)
+      else: df['NNLOPSweight'] = 1.
 
   # For experimental phase space (not NOTAG)
   else:
@@ -202,7 +197,7 @@ for cat in cats:
 
   # For systematics trees: only for events in experimental phase space
   if opt.doSystematics:
-    if cat == "NOTAG": continue
+    if cat == "NOTAG" or cat == 'NoTag': continue
     sdf = pandas.DataFrame()
     for s in systematics:
       print "    --> Systematic: %s"%re.sub("YEAR",opt.year,s)
@@ -236,12 +231,8 @@ for stxsId in data[stxsVar].unique():
 
     # Extract stxsBin
     stxsBin = flashggSTXSDict[int(stxsId)]
-    if opt.productionMode == "wh": 
-      if "QQ2HQQ" in stxsBin: stxsBin = re.sub("QQ2HQQ","WH2HQQ",stxsBin)
-    elif opt.productionMode == "zh": 
-      if "QQ2HQQ" in stxsBin: stxsBin = re.sub("QQ2HQQ","ZH2HQQ",stxsBin)
     # ggZH: split by decay mode
-    elif opt.productionMode == "ggzh":
+    if opt.productionMode == "ggzh":
       if opt.decayExt == "_ZToQQ": stxsBin = re.sub("GG2H","GG2HQQ",stxsBin)
       elif opt.decayExt == "_ZToNuNu": stxsBin = re.sub("GG2HLL","GG2HNUNU",stxsBin)
     # For tHL split into separate bins for tHq and tHW
@@ -299,7 +290,7 @@ for stxsId in data[stxsVar].unique():
 
     if opt.doSystematics:
       # b) make RooDataHists for systematic variations
-      if cat == "NOTAG": continue
+      if cat == "NOTAG" or cat == 'NoTag': continue
       for s in systematics:
         for direction in ['Up','Down']:
           # Create mask for systematic variation
@@ -323,6 +314,7 @@ for stxsId in data[stxsVar].unique():
               if v == "weight": continue
               else: ws.var(v).setVal(getattr(ev,v))
             h.add(aset,getattr(ev,'weight'))
+          print "JTao: ",hName,"  N= ",h.numEntries()," N_wgt=",h.sumEntries()
           
           # Add to workspace
           getattr(ws,'import')(h)
