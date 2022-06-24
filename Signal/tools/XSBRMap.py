@@ -143,3 +143,59 @@ globalXSBRMap['STXS']['THQ_FWDH'] = {'mode':'tHq','factor':0.0279}
 globalXSBRMap['STXS']['THQ'] = {'mode':'tHq','factor':0.9721}
 globalXSBRMap['STXS']['THW_FWDH'] = {'mode':'tHW','factor':0.0106}
 globalXSBRMap['STXS']['THW'] = {'mode':'tHW','factor':0.9894}
+
+# STXS merged
+globalXSBRMap['STXSmerged'] = globalXSBRMap['example']
+# compute factors from merged STXS bins
+factordict = {}
+for k in globalXSBRMap['STXS'].keys():
+   if k == 'decay':
+      continue
+   if 'FWDH' in k:
+      factordict[k] = globalXSBRMap['STXS'][k]['factor']
+   else:
+      kshort = k.split('_')[0]
+      if not kshort in factordict:
+         factordict[kshort] = 0
+      factordict[kshort] += globalXSBRMap['STXS'][k]['factor']
+for k,v in factordict.items():
+   if 'FWDH' in k:
+      globalXSBRMap['STXSmerged'][k] = globalXSBRMap['STXS'][k]
+   else:
+      globalXSBRMap['STXSmerged'][k]['factor'] = v
+
+# 4 Untagged
+#globalXSBRMap['Untagged4'] = globalXSBRMap['STXSmerged']
+globalXSBRMap['Untagged4'] = od()
+globalXSBRMap['Untagged4']['decay'] = {'mode':'hgg'}
+globalXSBRMap['Untagged4']['ggH'] = {'mode':'ggH'}
+globalXSBRMap['Untagged4']['qqH'] = {'mode':'qqH'}
+globalXSBRMap['Untagged4']['WH'] = {'mode':'WH'}
+globalXSBRMap['Untagged4']['ZH'] = {'mode':'ZH'}
+globalXSBRMap['Untagged4']['ttH'] = {'mode':'ttH'}
+globalXSBRMap['Untagged4']['tHq'] = {'mode':'tHq'}
+globalXSBRMap['Untagged4']['tHW'] = {'mode':'tHW'}
+#globalXSBRMap['Untagged4'][''] = {'mode':''}
+
+#Untag+VBF
+globalXSBRMap['UntagVBF'] = od()
+globalXSBRMap['UntagVBF']['decay'] = {'mode':'hgg'}
+globalXSBRMap['UntagVBF']['ggH'] = {'mode':'ggH'}
+globalXSBRMap['UntagVBF']['qqH'] = {'mode':'qqH'}
+globalXSBRMap['UntagVBF']['WH'] = {'mode':'WH'}
+globalXSBRMap['UntagVBF']['ZH'] = {'mode':'ZH'}
+globalXSBRMap['UntagVBF']['ttH'] = {'mode':'ttH'}
+globalXSBRMap['UntagVBF']['tHq'] = {'mode':'tHq'}
+globalXSBRMap['UntagVBF']['tHW'] = {'mode':'tHW'}
+
+#Untag+VBF: EB+EB, !(EB+EB)
+globalXSBRMap['UntagVBF_TaoCats'] = od()
+globalXSBRMap['UntagVBF_TaoCats']['decay'] = {'mode':'hgg'}
+globalXSBRMap['UntagVBF_TaoCats']['ggH'] = {'mode':'ggH'}
+globalXSBRMap['UntagVBF_TaoCats']['qqH'] = {'mode':'qqH'}
+globalXSBRMap['UntagVBF_TaoCats']['WH'] = {'mode':'WH'}
+globalXSBRMap['UntagVBF_TaoCats']['ZH'] = {'mode':'ZH'}
+globalXSBRMap['UntagVBF_TaoCats']['ttH'] = {'mode':'ttH'}
+globalXSBRMap['UntagVBF_TaoCats']['tHq'] = {'mode':'tHq'}
+globalXSBRMap['UntagVBF_TaoCats']['tHW'] = {'mode':'tHW'}
+

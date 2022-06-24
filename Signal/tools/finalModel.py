@@ -33,6 +33,12 @@ class dummy_options:
 # Functions to get XS/BR
 def getXS(_SM,_MHVar,_mh,_pm):
   _MHVar.setVal(_mh)
+  print("_pm", _pm)
+  print("sqrts__", sqrts__)
+  #if "ggZH" not in _pm:
+  print("type(_SM.modelBuilder.out.function)", type(_SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__))))
+  print("type(_SM.modelBuilder.out.function).getVal()", type(_SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()))
+  print("_SM.modelBuilder.out.function).getVal()", _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal())
   return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
 def getBR(_SM,_MHVar,_mh,_dm):
   _MHVar.setVal(_mh)
@@ -78,6 +84,21 @@ class FinalModel:
   def __init__(self,_ssfMap,_proc,_cat,_ext,_year,_sqrts,_datasets,_xvar,_MH,_MHLow,_MHHigh,_massPoints,_xsbrMap,_procSyst,_scales,_scalesCorr,_scalesGlobal,_smears,_doVoigtian,_useDCB,_skipVertexScenarioSplit,_skipSystematics,_doEffAccFromJson):
     self.ssfMap = _ssfMap
     self.proc = _proc
+    # translate the proc
+    if self.proc == "ggh":
+       self.proc = "ggH" #"GG2H_FWDH"
+    elif self.proc == "vbf":
+       self.proc = "qqH" #"VBF_FWDH"
+    elif self.proc == "wh":
+       self.proc = "WH" #"WH2HQQ_FWDH"
+    elif self.proc == "zh":
+       self.proc = "ZH" #"ZH2HQQ_FWDH"
+    elif self.proc == "tth":
+       self.proc = "ttH" #"TTH_FWDH"
+    elif self.proc == "thq":
+       self.proc = "tHq" #"THQ_FWDH"
+    elif self.proc == "thw":
+       self.proc = "tHW" #"THW_FWDH"
     self.procSyst = _procSyst # Signal process used for systematics (useful for low stat cases)
     self.cat = _cat
     self.ext = _ext
@@ -341,24 +362,22 @@ class FinalModel:
       # Add systematics
       formula += "*(1."
       # Global
-      if 'scalesGlobal' in self.NuisanceMap:
-        for sName, sInfo in self.NuisanceMap['scalesGlobal'].iteritems():
-          formula += "+@%g"%dependents.getSize()
-          # For adding additional factor
-          for so in sInfo['opts']: 
-            if "factor_%s"%self.cat in so:
-              additionalFactor = float(so.split("=")[-1])
-              formula += "*%3.1f"%additionalFactor
-          dependents.add(sInfo['param'])
+      for sName, sInfo in self.NuisanceMap['scalesGlobal'].iteritems():
+        formula += "+@%g"%dependents.getSize()
+        # For adding additional factor
+        for so in sInfo['opts']: 
+          if "factor_%s"%self.cat in so:
+            additionalFactor = float(so.split("=")[-1])
+            formula += "*%3.1f"%additionalFactor
+        dependents.add(sInfo['param'])
       # Other systs: scales, scalesCorr, smears
       for sType in ['scales','scalesCorr','smears']:
-        if sType in self.NuisanceMap:
-          for sName, sInfo in self.NuisanceMap[sType].iteritems():
-            c = sInfo['meanConst'].getVal()
-            if abs(c)>=5.e-5:
-              formula += "+@%g*@%g"%(dependents.getSize(),dependents.getSize()+1)
-              dependents.add(sInfo['meanConst'])
-              dependents.add(sInfo['param'])
+        for sName, sInfo in self.NuisanceMap[sType].iteritems():
+          c = sInfo['meanConst'].getVal()
+          if abs(c)>=5.e-5:
+            formula += "+@%g*@%g"%(dependents.getSize(),dependents.getSize()+1)
+            dependents.add(sInfo['meanConst'])
+            dependents.add(sInfo['param'])
       formula += ")"
     self.Functions[meanName] = ROOT.RooFormulaVar(meanName,meanName,formula,dependents)
 
@@ -372,13 +391,12 @@ class FinalModel:
       # Add systematics
       formula += "*TMath::Max(1.e-2,(1."
       for sType in ['scales','scalesCorr','smears']:
-        if sType in self.NuisanceMap:
-          for sName, sInfo in self.NuisanceMap[sType].iteritems():
-            c = sInfo['sigmaConst'].getVal()
-            if c>=1e-4:
-              formula += "+@%g*@%g"%(dependents.getSize(),dependents.getSize()+1)
-              dependents.add(sInfo['sigmaConst'])
-              dependents.add(sInfo['param'])
+        for sName, sInfo in self.NuisanceMap[sType].iteritems():
+          c = sInfo['sigmaConst'].getVal()
+          if c>=1e-4:
+            formula += "+@%g*@%g"%(dependents.getSize(),dependents.getSize()+1)
+            dependents.add(sInfo['sigmaConst'])
+            dependents.add(sInfo['param'])
       formula += "))"
     self.Functions[sigmaName] = ROOT.RooFormulaVar(sigmaName,sigmaName,formula,dependents)
 
@@ -389,13 +407,12 @@ class FinalModel:
     if not skipSystematics:
       # Add systematics
       for sType in ['scales','scalesCorr','smears']:
-        if sType in self.NuisanceMap:
-          for sName, sInfo in self.NuisanceMap[sType].iteritems():
-            c = sInfo['rateConst'].getVal()
-            if c>=5.e-4:
-              formula += "+@%g*@%g"%(dependents.getSize(),dependents.getSize()+1)
-              dependents.add(sInfo['rateConst'])
-              dependents.add(sInfo['param'])
+        for sName, sInfo in self.NuisanceMap[sType].iteritems():
+          c = sInfo['rateConst'].getVal()
+          if c>=5.e-4:
+            formula += "+@%g*@%g"%(dependents.getSize(),dependents.getSize()+1)
+            dependents.add(sInfo['rateConst'])
+            dependents.add(sInfo['param'])
     formula += ")"
     self.Functions[rateName] = ROOT.RooFormulaVar(rateName,rateName,formula,dependents)
 

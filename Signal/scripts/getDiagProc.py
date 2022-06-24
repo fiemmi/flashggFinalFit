@@ -44,7 +44,8 @@ for cat in allCats.split(","):
 for proc in allProcs.split(","):
   print " --> Processing: %s"%proc
   # Open workspace
-  _WSFileName = glob.glob("%s/output*M%s*%s.root"%(opt.inputWSDir,opt.MH,proc))[0]
+  #_WSFileName = glob.glob("%s/output*M%s*%s.root"%(opt.inputWSDir,opt.MH,proc))[0]
+  _WSFileName = glob.glob("%s/output_%s_M%s.root"%(opt.inputWSDir,proc,opt.MH))[0]
   f = ROOT.TFile(_WSFileName,'read')
   inputWS = f.Get(inputWSName__)
 
@@ -89,8 +90,7 @@ if opt.makeSimpleFTest:
       if proc == dproc[cat]: continue
       else: ff.write("    %-90s : {\"nRV\":1,\"nWV\":1}"%k)
       # Drop comma for last entry
-      #if pitr == (len(allProcs.split(","))-1): ff.write("\n")
-      if pitr == len(allProcs.split(",")): ff.write("\n")
+      if pitr == (len(allProcs.split(","))-1): ff.write("\n")
       else: ff.write(",\n")
       pitr += 1
     ff.write("}")

@@ -17,7 +17,7 @@ def getEffSigma(_h):
   mu, rms, total = _h.GetMean(), _h.GetRMS(), _h.Integral()
   # Scan round window of mean: window RMS/binWidth (cannot be bigger than 0.1*number of bins)
   nWindow = int(rms/binw) if (rms/binw) < 0.1*nbins else int(0.1*nbins)
-  # Determine minimum width of distribution which holds 0.693 of total
+  # Determine minimum width of distribution which holds 0.683 of total
   rlim = 0.683*total
   wmin, iscanmin = 9999999, -999
   for iscan in range(-1*nWindow,nWindow+1):
@@ -67,7 +67,7 @@ def getEffSigma(_h):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Ftest: plots
 # Plot possible nGauss fits and chi2 values
-def plotFTest(ssfs,_opt=1,_outdir='./',_extension='',_proc='',_cat='',_mass='125'):
+def plotFTest(ssfs,_opt=1,_outdir='./',_extension='',_proc='',_cat='',_mass='125', _voig=0): #JTao
   canv = ROOT.TCanvas()
   canv.SetLeftMargin(0.15)
   LineColorMap = {'1':ROOT.kAzure+1,'2':ROOT.kRed-4,'3':ROOT.kGreen+2,'4':ROOT.kMagenta-9,'5':ROOT.kOrange}
@@ -116,8 +116,12 @@ def plotFTest(ssfs,_opt=1,_outdir='./',_extension='',_proc='',_cat='',_mass='125
   leg.SetTextSize(0.03)
   leg.AddEntry(hists['data'],"Simulation","ep")
   for k,ssf in ssfs.iteritems(): 
-    if int(k.split("_")[-1]) == _opt: leg.AddEntry(hists[k],"#bf{N_{gauss} = %s}: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
-    else: leg.AddEntry(hists[k],"N_{gauss} = %s: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
+    if int(k.split("_")[-1]) == _opt:
+       if _voig: leg.AddEntry(hists[k],"#bf{N_{viogtian} = %s}: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
+       else: leg.AddEntry(hists[k],"#bf{N_{gauss} = %s}: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
+    else: 
+       if _voig: leg.AddEntry(hists[k],"N_{voigtian} = %s: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
+       else: leg.AddEntry(hists[k],"N_{gauss} = %s: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
   leg.Draw("Same")
   # Add Latex
   lat = ROOT.TLatex()
@@ -132,7 +136,7 @@ def plotFTest(ssfs,_opt=1,_outdir='./',_extension='',_proc='',_cat='',_mass='125
   canv.SaveAs("%s/fTest_%s_%s_%s.pdf"%(_outdir,_cat,_proc,_extension))
 
 # Plot reduced chi2 vs nGauss
-def plotFTestResults(ssfs,_opt,_outdir="./",_extension='',_proc='',_cat='',_mass='125'):
+def plotFTestResults(ssfs,_opt,_outdir="./",_extension='',_proc='',_cat='',_mass='125', _voig=0): #JTao
   canv = ROOT.TCanvas()
   gr = ROOT.TGraph()
   # Loop over nGuassians
@@ -151,7 +155,8 @@ def plotFTestResults(ssfs,_opt,_outdir="./",_extension='',_proc='',_cat='',_mass
   # Draw axes
   haxes = ROOT.TH1F("h_axes_%s_%s"%(_proc,_extension),"h_axes_%s_%s"%(_proc,_extension),xmax+1,0,xmax+1)
   haxes.SetTitle("")
-  haxes.GetXaxis().SetTitle("N_{gauss}")
+  if _voig: haxes.GetXaxis().SetTitle("N_{Voigtian}")
+  else: haxes.GetXaxis().SetTitle("N_{gauss}")
   haxes.GetXaxis().SetTitleSize(0.05)
   haxes.GetXaxis().SetTitleOffset(0.85)
   haxes.GetXaxis().SetLabelSize(0.035)
@@ -175,10 +180,15 @@ def plotFTestResults(ssfs,_opt,_outdir="./",_extension='',_proc='',_cat='',_mass
   lat.SetNDC()
   lat.SetTextSize(0.03)
   lat.DrawLatex(0.9,0.92,"( %s , %s , %s )"%(_extension,_proc,_cat))
-  lat.DrawLatex(0.6,0.75,"Optimum N_{gauss} = %s"%_opt)
+  if _voig: lat.DrawLatex(0.6,0.75,"Optimum N_{Voigtian} = %s"%_opt)
+  else: lat.DrawLatex(0.6,0.75,"Optimum N_{gauss} = %s"%_opt)
   canv.Update()
-  canv.SaveAs("%s/fTest_%s_%s_%s_chi2_vs_nGauss.png"%(_outdir,_cat,_proc,_extension))
-  canv.SaveAs("%s/fTest_%s_%s_%s_chi2_vs_nGauss.pdf"%(_outdir,_cat,_proc,_extension))
+  if _voig: 
+    canv.SaveAs("%s/fTest_%s_%s_%s_chi2_vs_nVoig.png"%(_outdir,_cat,_proc,_extension))
+    canv.SaveAs("%s/fTest_%s_%s_%s_chi2_vs_nVoig.pdf"%(_outdir,_cat,_proc,_extension))
+  else:
+    canv.SaveAs("%s/fTest_%s_%s_%s_chi2_vs_nGauss.png"%(_outdir,_cat,_proc,_extension))
+    canv.SaveAs("%s/fTest_%s_%s_%s_chi2_vs_nGauss.pdf"%(_outdir,_cat,_proc,_extension))
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Signal fit plots
@@ -200,16 +210,14 @@ def plotPdfComponents(ssf,_outdir='./',_extension='',_proc='',_cat=''):
   hists['final'].SetMinimum(0)
   if hists['final'].GetMaximum()>hmax: hmax = hists['final'].GetMaximum()
   if hists['final'].GetMinimum()<hmin: hmin = hists['final'].GetMinimum()
-  #hists['final'].GetXaxis().SetRangeUser(115,140)
-  hists['final'].GetXaxis().SetRangeUser(100,150)
+  hists['final'].GetXaxis().SetRangeUser(115,140)
   # Create data histogram
   hists['data'] = ssf.xvar.createHistogram("h_data%s"%_extension,ROOT.RooFit.Binning(ssf.nBins))
   ssf.DataHists['125'].fillHistogram(hists['data'],ROOT.RooArgList(ssf.xvar))
   hists['data'].SetTitle("")
   hists['data'].GetXaxis().SetTitle("m_{#gamma#gamma} [GeV]")
   hists['data'].SetMinimum(0)
-  #hists['data'].GetXaxis().SetRangeUser(115,140)
-  hists['data'].GetXaxis().SetRangeUser(100,150)
+  hists['data'].GetXaxis().SetRangeUser(115,140)
   hists['data'].Scale(float(ssf.nBins)/1600)
   hists['data'].SetMarkerStyle(20)
   hists['data'].SetMarkerColor(1)
@@ -230,10 +238,12 @@ def plotPdfComponents(ssf,_outdir='./',_extension='',_proc='',_cat=''):
     for k,v in pdfs.iteritems():
       if pdfItr == 0:
 	if "gaus" in k: frac = ssf.Pdfs['final'].getComponents().getRealValue("frac_g0_constrained")
+        elif "voig" in k: frac = ssf.Pdfs['final'].getComponents().getRealValue("frac_g0_constrained") #JTao
 	else: frac = ssf.Pdfs['final'].getComponents().getRealValue("frac_constrained")
       else:
 	frac = ssf.Pdfs['final'].getComponents().getRealValue("%s_%s_recursive_fraction_%s"%(ssf.proc,ssf.cat,k))
       # Create histogram with 1600 bins
+      print "JTao: frac = %s for k = %s"%(frac,k)
       hists[k] = v.createHistogram("h_%s%s"%(k,_extension),ssf.xvar,ROOT.RooFit.Binning(1600))
       hists[k].Scale(frac)
       hists[k].SetLineColor(LineColorMap[pdfItr])
@@ -270,6 +280,7 @@ def plotPdfComponents(ssf,_outdir='./',_extension='',_proc='',_cat=''):
   lat1.SetTextSize(0.035)
   lat1.DrawLatex(0.65,0.3,"#chi^{2}/n(dof) = %.4f"%(ssf.getChi2()/ssf.Ndof))
 
+  # canv.SetLogy()
   canv.Update()
   canv.SaveAs("%s/%sshape_pdf_components_%s_%s.png"%(_outdir,_extension,_proc,_cat))
   canv.SaveAs("%s/%sshape_pdf_components_%s_%s.pdf"%(_outdir,_extension,_proc,_cat))
@@ -536,7 +547,7 @@ def plotSignalModel(_hists,_opt,_outdir=".",offset=0.02):
   lat0.SetTextSize(0.045)
   lat0.DrawLatex(0.15,0.92,"#bf{CMS} #it{%s}"%_opt.label)
   lat0.DrawLatex(0.77,0.92,"%s TeV"%(sqrts__.split("TeV")[0]))
-  lat0.DrawLatex(0.16+offset,0.83,"H #rightarrow #gamma#gamma")
+  lat0.DrawLatex(0.16+offset,0.83,"H#rightarrow#gamma#gamma")
 
   # Load translations
   translateCats = {} if _opt.translateCats is None else LoadTranslations(_opt.translateCats)
@@ -555,21 +566,16 @@ def plotSignalModel(_hists,_opt,_outdir=".",offset=0.02):
   else: yearStr, yearExt = _opt.years, "_%s"%_opt.years
 
   if _opt.cats == 'all': catStr, catExt = "All categories", "all"
-  elif _opt.cats == 'wall': catStr, catExt = "#splitline{All categories}{S/(S+B) weighted}", "wall"
-  elif len(_opt.cats.split(","))>1: procStr, procExt = "Multiple categories", "multipleCats"
+  elif _opt.cats == 'wall': catStr, catExt = "#splitline{All Categories}{S/(S+B) weighted}", "wall"
+  elif len(_opt.cats.split(","))>1: 
+     procStr, procExt = "Multiple categories", "multipleCats"
+     catStr, catExt = "All categories", "allTao"  #JTao
   else: catStr, catExt = Translate(_opt.cats,translateCats), _opt.cats
- 
+  print "JTao: catStr = ",catStr,", catExt = ",catExt 
   lat1.DrawLatex(0.85,0.86,"%s"%catStr)
-  lat1.DrawLatex(0.83,0.8,"%s %s"%(procStr,yearStr))
+  #lat1.DrawLatex(0.83,0.8,"%s %s"%(procStr,yearStr))
 
   canv.Update()
-
-  # Write effSigma to file
-  if len(_opt.years.split(",")) >1:
-    es = {}
-    es['combined'] = effSigma
-    for year in _opt.years.split(","): es[year] = getEffSigma(_hists['pdf_%s'%year])
-    with open("%s/effSigma_%s.json"%(_outdir,catExt),"w") as jf: json.dump(es,jf)
 
   # Save canvas
   canv.SaveAs("%s/smodel_%s%s%s.pdf"%(_outdir,catExt,procExt,yearExt))

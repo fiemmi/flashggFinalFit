@@ -3,7 +3,6 @@ import ROOT
 import json
 import numpy as np
 from scipy.optimize import minimize
-import scipy.stats
 from collections import OrderedDict as od
 from array import array
 
@@ -11,124 +10,105 @@ from array import array
 # So far defined up to MHPolyOrder=2
 pLUT = od()
 pLUT['DCB'] = od()
-pLUT['DCB']['dm_p0'] = [0.1,-2.5,2.5]
-pLUT['DCB']['dm_p1'] = [0.0,-0.1,0.1]
+#pLUT['DCB']['dm_p0'] = [0.1,-2.5,2.5]
+pLUT['DCB']['dm_p0'] = [-0.2,-2.0,2.0] #JTao
+#pLUT['DCB']['dm_p1'] = [0.0,-0.1,0.1]
+pLUT['DCB']['dm_p1'] = [0.0,-0.01,0.01]  #JTao
 pLUT['DCB']['dm_p2'] = [0.0,-0.001,0.001]
-pLUT['DCB']['sigma_p0'] = [2.,1.,20.]
-pLUT['DCB']['sigma_p1'] = [0.0,-0.1,0.1]
+#pLUT['DCB']['sigma_p0'] = [2.,1.,20.]
+pLUT['DCB']['sigma_p0'] = [1.5,0.5,5.] #JTao
+#pLUT['DCB']['sigma_p1'] = [0.0,-0.1,0.1]
+pLUT['DCB']['sigma_p1'] = [0.0,-0.01,0.01] #JTao
 pLUT['DCB']['sigma_p2'] = [0.0,-0.001,0.001]
-pLUT['DCB']['n1_p0'] = [20.,1.00001,500]
-pLUT['DCB']['n1_p1'] = [0.0,-0.1,0.1]
+#pLUT['DCB']['n1_p0'] = [20.,1.00001,500]  
+pLUT['DCB']['n1_p0'] = [10.,0.001,20] #JTao
+#pLUT['DCB']['n1_p1'] = [0.0,-0.1,0.1]
+pLUT['DCB']['n1_p1'] = [0.0,-0.01,0.01] #JTao
 pLUT['DCB']['n1_p2'] = [0.0,-0.001,0.001]
-pLUT['DCB']['n2_p0'] = [20.,1.00001,500]
-pLUT['DCB']['n2_p1'] = [0.0,-0.1,0.1]
+#pLUT['DCB']['n2_p0'] = [20.,1.00001,500]
+pLUT['DCB']['n2_p0'] = [10.,0.001,20] #JTao
+#pLUT['DCB']['n2_p1'] = [0.0,-0.1,0.1]
+pLUT['DCB']['n2_p1'] = [0.0,-0.01,0.01] #JTao
 pLUT['DCB']['n2_p2'] = [0.0,-0.001,0.001]
-pLUT['DCB']['a1_p0'] = [1.,1.,10.]
-pLUT['DCB']['a1_p1'] = [0.0,-0.1,0.1]
+#pLUT['DCB']['a1_p0'] = [1.,1.,10.]
+pLUT['DCB']['a1_p0'] = [1.,0.5,5.] #JTao
+#pLUT['DCB']['a1_p1'] = [0.0,-0.1,0.1]
+pLUT['DCB']['a1_p1'] = [0.0,-0.01,0.01] #JTao
 pLUT['DCB']['a1_p2'] = [0.0,-0.001,0.001]
-pLUT['DCB']['a2_p0'] = [1.,1.,20.]
-pLUT['DCB']['a2_p1'] = [0.0,-0.1,0.1]
+#pLUT['DCB']['a2_p0'] = [1.,1.,20.]
+pLUT['DCB']['a2_p0'] = [2.,0.5,5.] #JTao
+#pLUT['DCB']['a2_p1'] = [0.0,-0.1,0.1]
+pLUT['DCB']['a2_p1'] = [0.0,-0.01,0.01] #JTao
 pLUT['DCB']['a2_p2'] = [0.0,-0.001,0.001]
 pLUT['Gaussian_wdcb'] = od()
 pLUT['Gaussian_wdcb']['dm_p0'] = [0.1,-1.5,1.5]
 pLUT['Gaussian_wdcb']['dm_p1'] = [0.01,-0.01,0.01]
 pLUT['Gaussian_wdcb']['dm_p2'] = [0.01,-0.01,0.01]
-pLUT['Gaussian_wdcb']['sigma_p0'] = [1.5,1.0,4.]
+#pLUT['Gaussian_wdcb']['sigma_p0'] = [1.5,1.0,4.]
+pLUT['Gaussian_wdcb']['sigma_p0'] = [1.0,0.2,5.] #JTao
 pLUT['Gaussian_wdcb']['sigma_p1'] = [0.0,-0.1,0.1]
 pLUT['Gaussian_wdcb']['sigma_p2'] = [0.0,-0.001,0.001]
 pLUT['Frac'] = od()
-pLUT['Frac']['p0'] = [0.25,0.01,0.99]
-pLUT['Frac']['p1'] = [0.,-0.05,0.05]
+#pLUT['Frac']['p0'] = [0.25,0.01,0.99]
+pLUT['Frac']['p0'] = [0.80,0.001,0.999] #JTao
+#pLUT['Frac']['p1'] = [0.,-0.05,0.05]
+pLUT['Frac']['p1'] = [0.,-0.01,0.01] #JTao
 pLUT['Frac']['p2'] = [0.,-0.0001,0.0001]
 pLUT['Gaussian'] = od()
-pLUT['Gaussian']['dm_p0'] = [0.1,-5.,5.]
+#pLUT['Gaussian']['dm_p0'] = [0.1,-1.5,1.5]
+#pLUT['Gaussian']['dm_p0'] = [0.1,-3.,3.]
+pLUT['Gaussian']['dm_p0'] = [0.0,-3.,3.] #JTao
 pLUT['Gaussian']['dm_p1'] = [0.0,-0.01,0.01]
 pLUT['Gaussian']['dm_p2'] = [0.0,-0.01,0.01]
-pLUT['Gaussian']['sigma_p0'] = ['func',0.5,10.0]
+#pLUT['Gaussian']['sigma_p0'] = ['func',0.0001,10.0]
+pLUT['Gaussian']['sigma_p0'] = ['func',0.2,10.0]
 pLUT['Gaussian']['sigma_p1'] = [0.0,-0.01,0.01]
 pLUT['Gaussian']['sigma_p2'] = [0.0,-0.01,0.01]
 pLUT['FracGaussian'] = od()
-pLUT['FracGaussian']['p0'] = ['func',0.01,0.99]
+#pLUT['FracGaussian']['p0'] = ['func',0.01,0.99]
+pLUT['FracGaussian']['p0'] = ['func',0.001,0.999] #JTao
 pLUT['FracGaussian']['p1'] = [0.01,-0.005,0.005]
 pLUT['FracGaussian']['p2'] = [0.00001,-0.00001,0.00001]
 
-# Function to convert sumw2 variance to poisson interval
-def poisson_interval(x,eSumW2,level=0.68):
-  neff = x**2/(eSumW2**2)
-  scale = abs(x)/neff
-  l = scipy.stats.gamma.interval(level, neff, scale=scale,)[0]
-  u = scipy.stats.gamma.interval(level, neff+1, scale=scale,)[1]
-  # protect against no effective entries
-  l[neff==0] = 0.
-  # protect against no variance
-  l[eSumW2==0.] = 0.
-  u[eSumW2==0.] = np.inf
-  # convert to upper and lower errors
-  eLo, eHi = abs(l-x),abs(u-x)
-  return eLo, eHi
-
 # Function to calc chi2 for binned fit given pdf, RooDataHist and xvar as inputs
-#def calcChi2(x,pdf,d,errorType="Sumw2",_verbose=False,fitRange=[100,180]):
-#def calcChi2(x,pdf,d,errorType="Poisson",_verbose=False,fitRange=[110,140]):
-def calcChi2(x,pdf,d,errorType="Poisson",_verbose=False,fitRange=[105,150]):
-
-  k = 0. # number of non empty bins (for calc degrees of freedom)
+def calcChi2(x,pdf,d,errorType="SumW2",_verbose=False):
+  result = 0.
+  k = 0. # number of non empty bins
   normFactor = d.sumEntries()
-  
-  # Using numpy and poisson error
-  bins, nPdf, nData, eDataSumW2 = [], [],[],[]
   for i in range(d.numEntries()):
     p = d.get(i)
     x.setVal(p.getRealValue(x.GetName()))
-    if( x.getVal() < fitRange[0] )|( x.getVal() > fitRange[1] ): continue
-    ndata = d.weight()
-    if ndata*ndata == 0: continue
-    npdf = pdf.getVal(ROOT.RooArgSet(x))*normFactor*d.binVolume()
-    eLo, eHi = ROOT.Double(), ROOT.Double()
-    d.weightError(eLo,eHi,ROOT.RooAbsData.SumW2)
-    bins.append(i)
-    nPdf.append(npdf)
-    nData.append(ndata)
-    eDataSumW2.append(eHi) if npdf>ndata else eDataSumW2.append(eLo)
+    # Calc number of events in bin
+    nData = d.weight()
+    # If dataEntries == 0 then skip point
+    if _verbose: print(i,nData)
+    if nData*nData == 0: continue
+    nPdf = pdf.getVal(ROOT.RooArgSet(x))*normFactor*d.binVolume()
+    diff = nPdf-nData
+    # Calc error depending on input option
+    if errorType != 'Expected':
+      eLo, eHi = ROOT.Double(), ROOT.Double()
+      if errorType == 'Poisson': d.weightError(eLo,eHi,ROOT.RooAbsData.Poisson)
+      elif errorType == 'SumW2': d.weightError(eLo,eHi,ROOT.RooAbsData.SumW2)
+      else: 
+        print " --> [ERROR] errorType (%s) not recognised in calcChi2 function. Use [Poisson,SumW2,Expected]"
+        sys.exit(1)
+      e = eHi if diff > 0 else eLo
+    else: e = math.sqrt(nPdf)
+    # Raise Error if error is 0 (FIX to something more appropriate)
+    if e*e == 0.:
+      print " --> [ERROR] Error = 0 for bin %g. Try a different errorType option."%i
+      sys.exit(1)
+    # Calculate term and sum to chi2
+    term = diff*diff/(e*e)
+    if _verbose: print " --> [DEBUG] Bin %g : nPdf = %.6f, nData = %.6f, e = %.6f --> term = %.6f"%(i,nPdf,nData,e,term)
+    result += term
     k += 1
-
-  # Convert to numpy array
-  nPdf = np.asarray(nPdf)
-  nData = np.asarray(nData)
-  eDataSumW2 = np.asarray(eDataSumW2)
-
-  if errorType == 'Poisson':
-    # Change error to poisson intervals: take max interval as error
-    eLo,eHi = poisson_interval(nData,eDataSumW2,level=0.68)
-    #eDataPoisson = 0.5*(eHi+eLo)
-    eDataPoisson = np.maximum(eHi,eLo) 
-    #eDataPoisson = (nPdf>nData)*eHi + (nPdf<=nData)*eLo 
-    e = eDataPoisson
-    # Calculate chi2 terms
-    terms = (nPdf-nData)**2/(eDataPoisson**2)
-  elif errorType == "Expected":
-    # Change error to sqrt pdf entries
-    eExpected = np.sqrt(nPdf)
-    e = eExpected
-    # Calculate chi2 terms
-    terms = (nPdf-nData)**2/(eExpected**2)
-  else:
-    # Use SumW2 terms to calculate chi2
-    e = eDataSumW2
-    terms = (nPdf-nData)**2/(eDataSumW2**2)
-   
-  # If verbose: print to screen
-  if _verbose:
-    for i in range(len(terms)):
-      print " --> [DEBUG] Bin %g : nPdf = %.6f, nData = %.6f, e(%s) = %.6f --> chi2 term = %.6f"%(bins[i],nPdf[i],nData[i],errorType,e[i],terms[i])
-
-  # Sum terms
-  result = terms.sum()
-
-  return result,k
-
+  # Return value + number of non empty bins 
+  return result, k
+  
 # Function to add chi2 for multiple mass points
-def nChi2Addition(X,ssf,verbose=False):
+def nChi2Addition(X,ssf,_verbose=False):
   # X: vector of param values (updated with minimise function)
   # Loop over parameters and set RooVars
   for i in range(len(X)): ssf.FitParameters[i].setVal(X[i])
@@ -138,7 +118,7 @@ def nChi2Addition(X,ssf,verbose=False):
   C = len(X)-1 # number of fit params (-1 for MH)
   for mp,d in ssf.DataHists.iteritems():
     ssf.MH.setVal(int(mp))
-    chi2, k  = calcChi2(ssf.xvar,ssf.Pdfs['final'],d,_verbose=verbose)
+    chi2, k  = calcChi2(ssf.xvar,ssf.Pdfs['final'],d,_verbose=_verbose)
     chi2sum += chi2
     K += k
   # N degrees of freedom
@@ -149,7 +129,7 @@ def nChi2Addition(X,ssf,verbose=False):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
 class SimultaneousFit:
   # Constructor
-  def __init__(self,_name,_proc,_cat,_datasetForFit,_xvar,_MH,_MHLow,_MHHigh,_massPoints,_nBins,_MHPolyOrder,_minimizerMethod,_minimizerTolerance,verbose=True):
+  def __init__(self,_name,_proc,_cat,_datasetForFit,_xvar,_MH,_MHLow,_MHHigh,_massPoints,_nBins,_MHPolyOrder,_minimizerMethod,_minimizerTolerance,_doVoigtian,verbose=True): #JTao
     self.name = _name
     self.proc = _proc
     self.cat = _cat
@@ -167,11 +147,15 @@ class SimultaneousFit:
     # Prepare vars
     self.MH.setConstant(False)
     self.MH.setVal(125)
-    self.MH.setBins(10)
+#    self.MH.setBins(10)
+    self.MH.setBins(20)  #JTao
     self.dMH = ROOT.RooFormulaVar("dMH","dMH","@0-125.0",ROOT.RooArgList(self.MH)) 
     self.xvar.setVal(125)
     self.xvar.setBins(self.nBins)
     # Dicts to store all fit vars, polynomials, pdfs and splines
+    self.doVoigtian = _doVoigtian
+    if self.doVoigtian: self.GammaH = ROOT.RooRealVar("GammaH","GammaH",0.004,0.,5.)
+
     self.nGaussians = 1
     self.Vars = od()
     self.Varlists = od()
@@ -222,6 +206,66 @@ class SimultaneousFit:
       self.DataHists[k] = ROOT.RooDataHist("%s_hist"%d.GetName(),"%s_hist"%d.GetName(),ROOT.RooArgSet(self.xvar),drw)
   
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
+  def buildDCBplusVoigtian(self,_recursive=True): ##JTao
+    # DCB
+    # Define polynominal functions (in dMH)
+    for f in ['dm','sigma','n1','n2','a1','a2']: 
+      k = "%s_dcb"%f
+      self.Varlists[k] = ROOT.RooArgList("%s_coeffs"%k)
+      # Create coeff for polynominal of order MHPolyOrder: y = a+bx+cx^2+...
+      for po in range(0,self.MHPolyOrder+1):
+        self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),pLUT['DCB']["%s_p%s"%(f,po)][0],pLUT['DCB']["%s_p%s"%(f,po)][1],pLUT['DCB']["%s_p%s"%(f,po)][2])
+	self.Varlists[k].add( self.Vars['%s_p%g'%(k,po)] ) 
+      # Define polynominal
+      self.Polynomials[k] = ROOT.RooPolyVar(k,k,self.dMH,self.Varlists[k])
+    # Mean function
+    self.Polynomials['mean_dcb'] = ROOT.RooFormulaVar("mean_dcb","mean_dcb","(@0+@1)",ROOT.RooArgList(self.MH,self.Polynomials['dm_dcb']))
+    # Build DCB
+    self.Pdfs['dcb'] = ROOT.RooDoubleCBFast("dcb","dcb",self.xvar,self.Polynomials['mean_dcb'],self.Polynomials['sigma_dcb'],self.Polynomials['a1_dcb'],self.Polynomials['n1_dcb'],self.Polynomials['a2_dcb'],self.Polynomials['n2_dcb'])
+
+    # Voigtian
+    # Define polynomial function for sigma (in dMH). Voigtian defined to have same mean as DCB
+    f = "sigma"
+    k = "%s_gaus"%f
+    self.Varlists[k] = ROOT.RooArgList("%s_coeffs"%k)    
+    # Create coeff for polynominal of order MHPolyOrder: y = a+bx+cx^2+...
+    for po in range(0,self.MHPolyOrder+1):
+      self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),pLUT['Gaussian_wdcb']["%s_p%s"%(f,po)][0],pLUT['Gaussian_wdcb']["%s_p%s"%(f,po)][1],pLUT['Gaussian_wdcb']["%s_p%s"%(f,po)][2])
+      self.Varlists[k].add( self.Vars['%s_p%g'%(k,po)] )
+    # Define polynomial
+    self.Polynomials[k] = ROOT.RooPolyVar(k,k,self.dMH,self.Varlists[k])
+    # Build Vogtian
+    self.Pdfs['voig'] = ROOT.RooVoigtian("voig","gaus",self.xvar,self.Polynomials['mean_dcb'],self.GammaH,self.Polynomials['sigma_gaus'])
+    
+     # Relative fraction: also polynomial of order MHPolyOrder
+    self.Varlists['frac'] = ROOT.RooArgList("frac_coeffs")
+    for po in range(0,self.MHPolyOrder+1):
+      self.Vars['frac_p%g'%po] = ROOT.RooRealVar("frac_p%g"%po,"frac_p%g"%po,pLUT['Frac']['p%g'%po][0],pLUT['Frac']['p%g'%po][1],pLUT['Frac']['p%g'%po][2])
+      self.Varlists['frac'].add( self.Vars['frac_p%g'%po] )
+    # Define Polynomial
+    self.Polynomials['frac'] = ROOT.RooPolyVar('frac','frac',self.dMH,self.Varlists['frac'])
+    # Constrain fraction to not be above 1 or below 0
+    self.Polynomials['frac_constrained'] = ROOT.RooFormulaVar("frac_constrained","frac_constrained","(@0>0)*(@0<1)*@0+(@0>1.0)*0.9999",ROOT.RooArgList(self.Polynomials['frac']))
+    self.Coeffs['frac_constrained'] = self.Polynomials['frac_constrained' ]        
+
+    # # add a pol2 for possible "grass"
+    # f = "bkg"
+    # k = "%s_p"%f
+    # self.Varlists[k] = ROOT.RooArgList("%s_coeffs"%k)    
+    # # Create coeff for polynominal of order MHPolyOrder: y = a+bx+cx^2+...
+    # for po in range(0,self.BkgPolyOrder+1):
+    #   self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),0,-1,1)
+    #   self.Varlists[k].add( self.Vars['%s_p%g'%(k,po)] )
+    # self.Pdfs['bkg'] = ROOT.RooChebychev("bkg","bkg",self.xvar,sel.VarLists[k])
+
+    # Define total PDF
+    _pdfs, _coeffs = ROOT.RooArgList(), ROOT.RooArgList()
+    ##for pdf in ['dcb','voig','bkg']: _pdfs.add(self.Pdfs[pdf])
+    for pdf in ['dcb','voig']: _pdfs.add(self.Pdfs[pdf])
+    _coeffs.add(self.Coeffs['frac_constrained'])
+    self.Pdfs['final'] = ROOT.RooAddPdf("%s_%s"%(self.proc,self.cat),"%s_%s"%(self.proc,self.cat),_pdfs,_coeffs,_recursive)
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
   def buildDCBplusGaussian(self,_recursive=True):
 
     # DCB
@@ -253,7 +297,6 @@ class SimultaneousFit:
     self.Polynomials[k] = ROOT.RooPolyVar(k,k,self.dMH,self.Varlists[k])
     # Build Gaussian
     self.Pdfs['gaus'] = ROOT.RooGaussian("gaus","gaus",self.xvar,self.Polynomials['mean_dcb'],self.Polynomials['sigma_gaus'])
-    
         
     # Relative fraction: also polynomial of order MHPolyOrder
     self.Varlists['frac'] = ROOT.RooArgList("frac_coeffs")
@@ -265,13 +308,79 @@ class SimultaneousFit:
     # Constrain fraction to not be above 1 or below 0
     self.Polynomials['frac_constrained'] = ROOT.RooFormulaVar("frac_constrained","frac_constrained","(@0>0)*(@0<1)*@0+(@0>1.0)*0.9999",ROOT.RooArgList(self.Polynomials['frac']))
     self.Coeffs['frac_constrained'] = self.Polynomials['frac_constrained' ]
+    
+    # # add a pol2 for possible "grass"
+    # f = "bkg"
+    # k = "%s_p"%f
+    # self.Varlists[k] = ROOT.RooArgList("%s_coeffs"%k)    
+    # # Create coeff for polynominal of order MHPolyOrder: y = a+bx+cx^2+...
+    # for po in range(0,self.BkgPolyOrder+1):
+    #   self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),0,-1,1)
+    #   self.Varlists[k].add( self.Vars['%s_p%g'%(k,po)] )
+    # self.Pdfs['bkg'] = ROOT.RooChebychev("bkg","bkg",self.xvar,sel.VarLists[k])
 
     # Define total PDF
     _pdfs, _coeffs = ROOT.RooArgList(), ROOT.RooArgList()
-    for pdf in ['dcb','gaus']: _pdfs.add(self.Pdfs[pdf])
+    for pdf in ['dcb','gaus','bkg']: _pdfs.add(self.Pdfs[pdf])
     _coeffs.add(self.Coeffs['frac_constrained'])
     self.Pdfs['final'] = ROOT.RooAddPdf("%s_%s"%(self.proc,self.cat),"%s_%s"%(self.proc,self.cat),_pdfs,_coeffs,_recursive)
     
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
+  def buildNVoigtians(self,nGaussians,_recursive=True): #JTao
+    # Set number
+    self.nGaussians = nGaussians
+    #self.GammaH = ROOT.RooRealVar("GammaH","GammaH",0.004,0.,5.)
+    print "==JTao== GammaH : ",self.GammaH
+    # Loop over NGaussians
+    for g in range(0,nGaussians):
+      for f in ['dm','sigma']: 
+	k = "%s_g%g"%(f,g)
+	self.Varlists[k] = ROOT.RooArgList("%s_coeffs"%k)
+	for po in range(0,self.MHPolyOrder+1):
+          if(f == "sigma")&(po==0): 
+            #self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),(g+1)*1.0,pLUT['Gaussian']["%s_p%s"%(f,po)][1],pLUT['Gaussian']["%s_p%s"%(f,po)][2])
+            self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),(g+1.5)*0.6,pLUT['Gaussian']["%s_p%s"%(f,po)][1],pLUT['Gaussian']["%s_p%s"%(f,po)][2]) #JTao 
+	  else:
+            self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),pLUT['Gaussian']["%s_p%s"%(f,po)][0],pLUT['Gaussian']["%s_p%s"%(f,po)][1],pLUT['Gaussian']["%s_p%s"%(f,po)][2])
+	  self.Varlists[k].add( self.Vars['%s_p%g'%(k,po)] ) 
+	# Define polynominal
+	self.Polynomials[k] = ROOT.RooPolyVar(k,k,self.dMH,self.Varlists[k])
+      # Mean function
+      self.Polynomials['mean_g%g'%g] = ROOT.RooFormulaVar("mean_g%g"%g,"mean_g%g"%g,"(@0+@1)",ROOT.RooArgList(self.MH,self.Polynomials['dm_g%g'%g]))
+      # Build Voigtians       
+      self.Pdfs['voig_n%g'%g] = ROOT.RooVoigtian("voig_n%g"%g,"voig_n%g"%g,self.xvar,self.Polynomials['mean_g%g'%g],self.GammaH,self.Polynomials['sigma_g%g'%g])
+      #JTao
+      #print "==JTao=="
+      # Relative fractions: also polynomials of order MHPolyOrder (define up to n=nGaussians-1)
+      if g < nGaussians-1:
+	self.Varlists['frac_g%g'%g] = ROOT.RooArgList("frac_g%g_coeffs"%g)
+	for po in range(0,self.MHPolyOrder+1):
+	  if po == 0:
+	    #self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.5-0.05*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2])
+            #self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.6-0.1*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2]) #JTao ftest1
+            #self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.6-0.05*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2]) #JTao ftest2
+            #self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.5-0.1*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2]) #JTao ftest3 
+            self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.7-0.1*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2]) #JTao ftest4
+            #self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.5+0.08*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2]) #JTao
+            #self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.9/nGaussians+0.05*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2]) #JTao
+	  else:
+	    self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),pLUT['FracGaussian']['p%g'%po][0],pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2])
+	  self.Varlists['frac_g%g'%g].add( self.Vars['frac_g%g_p%g'%(g,po)] )
+	# Define Polynomial
+	self.Polynomials['frac_g%g'%g] = ROOT.RooPolyVar("frac_g%g"%g,"frac_g%g"%g,self.dMH,self.Varlists['frac_g%g'%g])
+	# Constrain fraction to not be above 1 or below 0
+	#self.Polynomials['frac_g%g_constrained'%g] = ROOT.RooFormulaVar('frac_g%g_constrained'%g,'frac_g%g_constrained'%g,"(@0>0)*(@0<1)*@0+ (@0>1.0)*0.9999",ROOT.RooArgList(self.Polynomials['frac_g%g'%g]))
+        #JTao constrain fractions to between 0.001-0.999
+        self.Polynomials['frac_g%g_constrained'%g] = ROOT.RooFormulaVar('frac_g%g_constrained'%g,'frac_g%g_constrained'%g,"(@0<0.001)*0.001 + (@0>0.001)*(@0<0.999)*@0 + (@0>0.999)*0.999",ROOT.RooArgList(self.Polynomials['frac_g%g'%g]))
+	self.Coeffs['frac_g%g_constrained'%g] = self.Polynomials['frac_g%g_constrained'%g]
+    # End of loop over n Gaussians
+    # Define total PDF
+    _pdfs, _coeffs = ROOT.RooArgList(), ROOT.RooArgList()
+    for g in range(0,nGaussians): 
+      _pdfs.add(self.Pdfs['voig_n%g'%g])
+      if g < nGaussians-1: _coeffs.add(self.Coeffs['frac_g%g_constrained'%g])
+    self.Pdfs['final'] = ROOT.RooAddPdf("%s_%s"%(self.proc,self.cat),"%s_%s"%(self.proc,self.cat),_pdfs,_coeffs,_recursive)
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
   def buildNGaussians(self,nGaussians,_recursive=True):
 
@@ -288,7 +397,8 @@ class SimultaneousFit:
 	for po in range(0,self.MHPolyOrder+1):
           # p0 value of sigma is function of g (creates gaussians of increasing width)
           if(f == "sigma")&(po==0): 
-            self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),(g+1)*1.0,pLUT['Gaussian']["%s_p%s"%(f,po)][1],pLUT['Gaussian']["%s_p%s"%(f,po)][2])
+            #self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),(g+1)*1.0,pLUT['Gaussian']["%s_p%s"%(f,po)][1],pLUT['Gaussian']["%s_p%s"%(f,po)][2])
+            self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),(g+1.5)*0.6,pLUT['Gaussian']["%s_p%s"%(f,po)][1],pLUT['Gaussian']["%s_p%s"%(f,po)][2]) #JTao 
 	  else:
             self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),pLUT['Gaussian']["%s_p%s"%(f,po)][0],pLUT['Gaussian']["%s_p%s"%(f,po)][1],pLUT['Gaussian']["%s_p%s"%(f,po)][2])
 	  self.Varlists[k].add( self.Vars['%s_p%g'%(k,po)] ) 
@@ -304,16 +414,29 @@ class SimultaneousFit:
 	self.Varlists['frac_g%g'%g] = ROOT.RooArgList("frac_g%g_coeffs"%g)
 	for po in range(0,self.MHPolyOrder+1):
 	  if po == 0:
-	    self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.5-0.05*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2])
+	    #self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.5-0.05*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2])
+            self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),0.6-0.1*g,pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2]) #JTao
 	  else:
 	    self.Vars['frac_g%g_p%g'%(g,po)] = ROOT.RooRealVar("frac_g%g_p%g"%(g,po),"frac_g%g_p%g"%(g,po),pLUT['FracGaussian']['p%g'%po][0],pLUT['FracGaussian']['p%g'%po][1],pLUT['FracGaussian']['p%g'%po][2])
 	  self.Varlists['frac_g%g'%g].add( self.Vars['frac_g%g_p%g'%(g,po)] )
 	# Define Polynomial
 	self.Polynomials['frac_g%g'%g] = ROOT.RooPolyVar("frac_g%g"%g,"frac_g%g"%g,self.dMH,self.Varlists['frac_g%g'%g])
 	# Constrain fraction to not be above 1 or below 0
-	self.Polynomials['frac_g%g_constrained'%g] = ROOT.RooFormulaVar('frac_g%g_constrained'%g,'frac_g%g_constrained'%g,"(@0>0)*(@0<1)*@0+ (@0>1.0)*0.9999",ROOT.RooArgList(self.Polynomials['frac_g%g'%g]))
+	#self.Polynomials['frac_g%g_constrained'%g] = ROOT.RooFormulaVar('frac_g%g_constrained'%g,'frac_g%g_constrained'%g,"(@0>0)*(@0<1)*@0+ (@0>1.0)*0.9999",ROOT.RooArgList(self.Polynomials['frac_g%g'%g]))
+        #JTao constrain fractions to between 0.001-0.999
+        self.Polynomials['frac_g%g_constrained'%g] = ROOT.RooFormulaVar('frac_g%g_constrained'%g,'frac_g%g_constrained'%g,"(@0<0.001)*0.001 + (@0>0.001)*(@0<0.999)*@0 + (@0>0.999)*0.999",ROOT.RooArgList(self.Polynomials['frac_g%g'%g]))
 	self.Coeffs['frac_g%g_constrained'%g] = self.Polynomials['frac_g%g_constrained'%g]
     # End of loop over n Gaussians
+    
+    # # add a pol2 for possible "grass"
+    # f = "bkg"
+    # k = "%s_p"%f
+    # self.Varlists[k] = ROOT.RooArgList("%s_coeffs"%k)    
+    # # Create coeff for polynominal of order MHPolyOrder: y = a+bx+cx^2+...
+    # for po in range(0,self.BkgPolyOrder+1):
+    #   self.Vars['%s_p%g'%(k,po)] = ROOT.RooRealVar("%s_p%g"%(k,po),"%s_p%g"%(k,po),0,-1,1)
+    #   self.Varlists[k].add( self.Vars['%s_p%g'%(k,po)] )
+    # self.Pdfs['bkg'] = ROOT.RooChebychev("bkg","bkg",self.xvar,sel.VarLists[k])
     
     # Define total PDF
     _pdfs, _coeffs = ROOT.RooArgList(), ROOT.RooArgList()
@@ -368,11 +491,10 @@ class SimultaneousFit:
     print " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     print " --> (%s) %s parameter values:"%(self.name,title)
     # Skip MH
-    for i in range(1,len(self.FitParameters)): print "    * %-20s = %.6f"%(self.FitParameters[i].GetName(),self.FitParameters[i].getVal())
+    #for i in range(1,len(self.FitParameters)): print "    * %-20s = %.6f"%(self.FitParameters[i].GetName(),self.FitParameters[i].getVal())
+    for i in range(0,len(self.FitParameters)): print "    * %-20s = %.6f"%(self.FitParameters[i].GetName(),self.FitParameters[i].getVal()) #JTao
     print "    ~~~~~~~~~~~~~~~~"
     print "    * chi2 = %.6f, n(dof) = %g --> chi2/n(dof) = %.3f"%(self.getChi2(),int(self.Ndof),self.getChi2()/int(self.Ndof))
-    print "    ~~~~~~~~~~~~~~~~"
-    print "    * [VERBOSE] chi2 = %.6f"%(self.getChi2(verbose=True))
     print " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
@@ -383,9 +505,9 @@ class SimultaneousFit:
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
   # Function to re-calculate chi2 after setting vars
-  def getChi2(self,verbose=False):
+  def getChi2(self, _verbose=False):
     x = self.extractX0()
-    self.Chi2 = nChi2Addition(x,self,verbose=verbose)
+    self.Chi2 = nChi2Addition(x,self,_verbose)
     return self.Chi2
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
