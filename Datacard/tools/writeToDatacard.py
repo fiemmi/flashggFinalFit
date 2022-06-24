@@ -226,7 +226,7 @@ def writeMCStatUncertainty(f,d,options):
 
 def writePdfIndex(f,d,options):
   f.write("\n")
-  for cat in d[~d['cat'].str.contains("NOTAG")].cat.unique(): 
+  for cat in d[~d['cat'].str.contains("NoTag")].cat.unique(): 
     indexStr = "pdfindex_%s_13TeV"%cat
     f.write("%-55s  discrete\n"%indexStr)
   return True

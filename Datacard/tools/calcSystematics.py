@@ -21,22 +21,22 @@ def addConstantSyst(sd,_syst,options):
     if fromJson:
       sd.loc[(sd['type']=='sig'),_syst['name']] = sd[(sd['type']=='sig')].apply(lambda x: getValueFromJson(x,uval,_syst['name']), axis=1)
     else:
-      # If signal and not NOTAG then set value
-      sd.loc[(sd['type']=='sig')&(~sd['cat'].str.contains("NOTAG")), _syst['name']] = _syst['value']
+      # If signal and not NoTag then set value
+      sd.loc[(sd['type']=='sig')&(~sd['cat'].str.contains("NoTag")), _syst['name']] = _syst['value']
 
   # Partial correlation
   elif _syst['correlateAcrossYears'] == -1:
     sd[_syst['name']] = '-'
     # Loop over years and set value for each year
     for year in options.years.split(","):
-      mask = (sd['type']=='sig')&(~sd['cat'].str.contains("NOTAG"))&(sd['year']==year)
+      mask = (sd['type']=='sig')&(~sd['cat'].str.contains("NoTag"))&(sd['year']==year)
       sd.loc[mask,_syst['name']] = _syst['value'][year]
 
   # If not correlate across years then create separate columns for each year and fill separately
   else:
     for year in options.years.split(","):
       sd["%s_%s"%(_syst['name'],year)] = '-'
-      sd.loc[(sd['type']=='sig')&(sd['year']==year)&(~sd['cat'].str.contains("NOTAG")), "%s_%s"%(_syst['name'],year)] = _syst['value'][year]
+      sd.loc[(sd['type']=='sig')&(sd['year']==year)&(~sd['cat'].str.contains("NoTag")), "%s_%s"%(_syst['name'],year)] = _syst['value'][year]
 
   return sd
 
@@ -58,8 +58,10 @@ def getValueFromJson(row,uncertainties,sname):
 def factoryType(d,s):
 
   #Fix for pdfWeight (as Nweights > 10)
-  if('pdfWeight' in s['name']): return "s_w"
-  #if('pdfWeight' in s['name'])|('alphaSWeight' in s['name']): return "s_w"
+  #if('pdfWeight' in s['name']): return "s_w"
+  if('pdfWeight' in s['name'])|('alphaSWeight' in s['name']): return "s_w"
+  # fix for scaleWeight_4 ??
+  if('scaleWeight' in s['name']): return "s_w"
 
   # Loop over rows in dataframe: until syst is found
   for ir, r in d[d['type']=='sig'].iterrows():
@@ -91,7 +93,7 @@ def factoryType(d,s):
       f.Close()
 
   # If never found:
-  print " --> [ERROR] systematic %s: cannot extract type in factoryType function. Doesn't match requirement for (anti)-symmetric weights or anti-symmetric histograms. Leaving..."
+  print " --> [ERROR] systematic %s: cannot extract type in factoryType function. Doesn't match requirement for (anti)-symmetric weights or anti-symmetric histograms. Leaving..." % s['name']
   sys.exit(1)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -243,11 +245,11 @@ def experimentalSystFactory(d,systs,ftype,options,_removal=False):
     # Extract factory type
     f = ftype[s['name']]
     if s['correlateAcrossYears']:
-      mask = (d['type']=='sig')&(~d['cat'].str.contains("NOTAG"))
+      mask = (d['type']=='sig')&(~d['cat'].str.contains("NoTag"))
       d.loc[mask,s['name']] = d[mask].apply(lambda x: compareYield(x,f,s['name']), axis=1)
     else:
       for year in options.years.split(","):
-        mask = (d['type']=='sig')&(~d['cat'].str.contains("NOTAG"))&(d['year']==year)
+        mask = (d['type']=='sig')&(~d['cat'].str.contains("NoTag"))&(d['year']==year)
         d.loc[mask,'%s_%s'%(s['name'],year)] = d[mask].apply(lambda x: compareYield(x,f,s['name']), axis=1)
 
     # Remove yield columns from dataFrame
