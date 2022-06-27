@@ -1,0 +1,23 @@
+{
+    "mu_inclusive":{
+        "pois":"r",
+        "fits":"profile1D:syst:r+profile1D:statonly:r",
+        "points":"40:1+40:1",
+        "fit_opts":"--setParameterRanges r=0.,2. --saveSpecifiedNuis all+--setParameterRanges r=0.,2. --saveSpecifiedNuis all"
+    },
+
+    "mu":{
+        "pois":"r_ggH,r_VBF,r_VH,r_top",
+        "fits":"profile1D:statonly_fixedMH:all",
+        "points":"20:1",
+        "fit_opts":"--setParameters MH=125.38 --saveSpecifiedNuis all --saveInactivePOI 1 --freezeParameters ALL,MH"
+    },
+
+   "mass":{
+        "pois":"r",
+        "fits":"profile1D:syst:MH+profile1D:statonly:MH",
+        "points":"41:1+41:1", 
+        "fit_opts":"--setParameterRanges r=0.,2.:MH=124,126 --saveSpecifiedNuis all --saveInactivePOI 1+--setParameterRanges r=0.,2.:MH=124,126 --saveSpecifiedNuis all --saveInactivePOI 1"       
+   }
+
+}
