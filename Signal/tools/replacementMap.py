@@ -268,6 +268,8 @@ globalReplacementMap['UntagVBF'] = od()
 #  * use proc x cat with highest number of WV events
 globalReplacementMap['UntagVBF']['procWV'] = "ggh"
 globalReplacementMap['UntagVBF']['catWV'] = "UntaggedTag_0"
+#globalReplacementMap['UntagVBF']['catWV'] = "UntaggedTag_2" #this has to be used when dealing with Legacy2016: ggh UntaggedTag_0 WV has not enough stats to be used as a replacement
+
 # For RIGHT VERTEX SCENARIO:
 #  * default you should add is diagonal process from given category 
 #  * if few events in diagonal process then may need to change the category aswell (see catRVMap)
