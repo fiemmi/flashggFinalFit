@@ -33,12 +33,7 @@ class dummy_options:
 # Functions to get XS/BR
 def getXS(_SM,_MHVar,_mh,_pm):
   _MHVar.setVal(_mh)
-  print("_pm", _pm)
-  print("sqrts__", sqrts__)
   #if "ggZH" not in _pm:
-  print("type(_SM.modelBuilder.out.function)", type(_SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__))))
-  print("type(_SM.modelBuilder.out.function).getVal()", type(_SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()))
-  print("_SM.modelBuilder.out.function).getVal()", _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal())
   return _SM.modelBuilder.out.function("SM_XS_%s_%s"%(_pm,sqrts__)).getVal()
 def getBR(_SM,_MHVar,_mh,_dm):
   _MHVar.setVal(_mh)
