@@ -108,7 +108,7 @@ def calcChi2(x,pdf,d,errorType="SumW2",_verbose=False):
   return result, k
   
 # Function to add chi2 for multiple mass points
-def nChi2Addition(X,ssf,_verbose=False):
+def nChi2Addition(X,ssf,doVoigtian,freezeGammaH,_verbose=False):
   # X: vector of param values (updated with minimise function)
   # Loop over parameters and set RooVars
   for i in range(len(X)): ssf.FitParameters[i].setVal(X[i])
@@ -116,8 +116,10 @@ def nChi2Addition(X,ssf,_verbose=False):
   chi2sum = 0
   K = 0 # number of non empty bins
   C = len(X)-1 # number of fit params (-1 for MH)
+  if doVoigtian and freezeGammaH: C = C - 1 # FIemmi: (-1 for GammaH)
   for mp,d in ssf.DataHists.iteritems():
     ssf.MH.setVal(int(mp))
+    if doVoigtian and freezeGammaH: ssf.GammaH.setVal(0.004) # FIemmi: freeze GammaH depending on options
     chi2, k  = calcChi2(ssf.xvar,ssf.Pdfs['final'],d,_verbose=_verbose)
     chi2sum += chi2
     K += k
@@ -129,7 +131,7 @@ def nChi2Addition(X,ssf,_verbose=False):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
 class SimultaneousFit:
   # Constructor
-  def __init__(self,_name,_proc,_cat,_datasetForFit,_xvar,_MH,_MHLow,_MHHigh,_massPoints,_nBins,_MHPolyOrder,_minimizerMethod,_minimizerTolerance,_doVoigtian,verbose=True): #JTao
+  def __init__(self,_name,_proc,_cat,_datasetForFit,_xvar,_MH,_MHLow,_MHHigh,_massPoints,_nBins,_MHPolyOrder,_minimizerMethod,_minimizerTolerance,_doVoigtian,_freezeGammaH,verbose=True): #JTao/FIemmi
     self.name = _name
     self.proc = _proc
     self.cat = _cat
@@ -154,8 +156,8 @@ class SimultaneousFit:
     self.xvar.setBins(self.nBins)
     # Dicts to store all fit vars, polynomials, pdfs and splines
     self.doVoigtian = _doVoigtian
+    self.freezeGammaH = _freezeGammaH
     if self.doVoigtian: self.GammaH = ROOT.RooRealVar("GammaH","GammaH",0.004,0.,5.)
-
     self.nGaussians = 1
     self.Vars = od()
     self.Varlists = od()
@@ -330,7 +332,7 @@ class SimultaneousFit:
     # Set number
     self.nGaussians = nGaussians
     #self.GammaH = ROOT.RooRealVar("GammaH","GammaH",0.004,0.,5.)
-    print "==JTao== GammaH : ",self.GammaH
+    print "==JTao== GammaH : ",self.GammaH.getValV()
     # Loop over NGaussians
     for g in range(0,nGaussians):
       for f in ['dm','sigma']: 
@@ -451,7 +453,6 @@ class SimultaneousFit:
     fv = self.Pdfs['final'].getVariables().Clone()
     fv.remove(self.xvar)
     self.FitParameters = ROOT.RooArgList(fv)
-    
     # Create initial vector of parameters and calculate initial Chi2
     if self.verbose: print "\n --> (%s) Initialising fit parameters"%self.name
     x0 = self.extractX0()
@@ -462,7 +463,7 @@ class SimultaneousFit:
 
     # Run fit
     if self.verbose: print " --> (%s) Running fit"%self.name
-    self.FitResult = minimize(nChi2Addition,x0,args=self,bounds=xbounds,method=self.minimizerMethod)
+    self.FitResult = minimize(nChi2Addition,x0,args=(self,self.doVoigtian,self.freezeGammaH),bounds=xbounds,method=self.minimizerMethod) #Fiemmi, add parameters to deal with GammaH
     self.Chi2 = self.getChi2()
     #self.Chi2 = nChi2Addition(self.FitResult['x'],self)
     # Print parameter post-fit values
@@ -507,14 +508,14 @@ class SimultaneousFit:
   # Function to re-calculate chi2 after setting vars
   def getChi2(self, _verbose=False):
     x = self.extractX0()
-    self.Chi2 = nChi2Addition(x,self,_verbose)
+    self.Chi2 = nChi2Addition(x,self,self.doVoigtian,self.freezeGammaH,_verbose) #Fiemmi, add params to deal with GammaH
     return self.Chi2
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
   # Function to re-calculate chi2/ndof after setting vars
   def getReducedChi2(self):
     x = self.extractX0()
-    self.Chi2 = nChi2Addition(x,self)
+    self.Chi2 = nChi2Addition(x,self,self.doVoigtian,self.freezeGammaH)
     return self.Chi2/int(self.Ndof)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  

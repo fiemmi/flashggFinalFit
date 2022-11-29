@@ -44,6 +44,7 @@ def get_options():
   parser.add_option('--minimizerTolerance', dest='minimizerTolerance', default=1e-8, type='float', help="(Scipy) Minimizer toleranve")
   # JTao
   parser.add_option("--doVoigtian", dest='doVoigtian', default=False, action="store_true", help="Use Voigtians instead of Gaussians for signal models with Higgs width as parameter")
+  parser.add_option("--freezeGammaH", dest='freezeGammaH', default=False, action="store_true", help="When paired with doVoigtian, freeze GammaH parameters in fTest and signalFit")
   return parser.parse_args()
 (opt,args) = get_options()
 
@@ -105,7 +106,7 @@ for pidx, proc in enumerate(procsToFTest):
     min_reduced_chi2, nGauss_opt = 999, 1
     for nGauss in range(1,opt.nGaussMax+1):
       k = "nGauss_%g"%nGauss
-      ssf = SimultaneousFit("fTest_RV_%g"%nGauss,proc,opt.cat,datasets_RV,xvar.Clone(),MH,MHLow,MHHigh,opt.mass,opt.nBins,0,opt.minimizerMethod,opt.minimizerTolerance,opt.doVoigtian,verbose=False) #JTao
+      ssf = SimultaneousFit("fTest_RV_%g"%nGauss,proc,opt.cat,datasets_RV,xvar.Clone(),MH,MHLow,MHHigh,opt.mass,opt.nBins,0,opt.minimizerMethod,opt.minimizerTolerance,opt.doVoigtian,opt.freezeGammaH,verbose=False) #JTao
       if opt.doVoigtian: #JTao
         ssf.buildNVoigtians(nGauss)
       else:
@@ -133,7 +134,7 @@ for pidx, proc in enumerate(procsToFTest):
     min_reduced_chi2, nGauss_opt = 999, 1
     for nGauss in range(1,opt.nGaussMax+1):
       k = "nGauss_%g"%nGauss
-      ssf = SimultaneousFit("fTest_WV_%g"%nGauss,proc,opt.cat,datasets_WV,xvar.Clone(),MH,MHLow,MHHigh,opt.mass,opt.nBins,0,opt.minimizerMethod,opt.minimizerTolerance,opt.doVoigtian,verbose=False) #JTao
+      ssf = SimultaneousFit("fTest_WV_%g"%nGauss,proc,opt.cat,datasets_WV,xvar.Clone(),MH,MHLow,MHHigh,opt.mass,opt.nBins,0,opt.minimizerMethod,opt.minimizerTolerance,opt.doVoigtian,opt.freezeGammaH,verbose=False) #JTao
       if opt.doVoigtian: #JTao
         ssf.buildNVoigtians(nGauss)
       else:
