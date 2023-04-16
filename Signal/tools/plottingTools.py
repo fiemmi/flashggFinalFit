@@ -117,7 +117,7 @@ def plotFTest(ssfs,_opt=1,_outdir='./',_extension='',_proc='',_cat='',_mass='125
   leg.AddEntry(hists['data'],"Simulation","ep")
   for k,ssf in ssfs.iteritems(): 
     if int(k.split("_")[-1]) == _opt:
-       if _voig: leg.AddEntry(hists[k],"#bf{N_{viogtian} = %s}: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
+       if _voig: leg.AddEntry(hists[k],"#bf{N_{voigtian} = %s}: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
        else: leg.AddEntry(hists[k],"#bf{N_{gauss} = %s}: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
     else: 
        if _voig: leg.AddEntry(hists[k],"N_{voigtian} = %s: #chi^{2}/n(dof) = %.4f"%(k.split("_")[-1],ssf.getReducedChi2()),"L")
