@@ -751,8 +751,7 @@ int main(int argc, char* argv[]){
         //FIXME trying to remove duplicated names for 2016+2017 combination
 	//if (isFlashgg_) ext = Form("13TeV_%d",year_);
 	for (int cat=startingCategory; cat<ncats; cat++){
-
-		map<string,int> choices;
+	  	map<string,int> choices;
 		map<string,std::vector<int> > choices_envelope;
 		map<string,RooAbsPdf*> pdfs;
 		map<string,RooAbsPdf*> allPdfs;
@@ -816,8 +815,7 @@ int main(int argc, char* argv[]){
 		// Standard F-Test to find the truth functions
 		for (vector<string>::iterator funcType=functionClasses.begin(); 
 				funcType!=functionClasses.end(); funcType++){
-
-			double thisNll=0.; double prevNll=0.; double chi2=0.; double prob=0.; 
+		  	double thisNll=0.; double prevNll=0.; double chi2=0.; double prob=0.; 
 			int order=1; int prev_order=0; int cache_order=0;
 
 			RooAbsPdf *prev_pdf=NULL;
@@ -826,7 +824,7 @@ int main(int argc, char* argv[]){
 
 			int counter =0;
 			//	while (prob<0.05){
-			while (prob<0.05 && order < 7){ //FIXME
+			while (prob<0.05 && order < 6){ //FIXME
 				RooAbsPdf *bkgPdf = getPdf(pdfsModel,*funcType,order,Form("ftest_pdf_%d_%s",(cat+catOffset),ext.c_str()));
 				if (!bkgPdf){
 					// assume this order is not allowed
@@ -887,7 +885,7 @@ int main(int argc, char* argv[]){
 					RooAbsPdf *bkgPdf = getPdf(pdfsModel,*funcType,order,Form("env_pdf_%d_%s",(cat+catOffset),ext.c_str()));
 					if (!bkgPdf ){
 						// assume this order is not allowed
-						if (order >6) { std::cout << " [WARNING] could not add ] " << std::endl; break ;}
+						if (order > 5) { std::cout << " [WARNING] could not add ] " << std::endl; break ;}
 						order++;
 					}
 					else {
@@ -911,9 +909,7 @@ int main(int argc, char* argv[]){
 						plot(mass,bkgPdf,data,Form("%s/%s%d_cat%d.pdf",outDir.c_str(),funcType->c_str(),order,(cat+catOffset)),flashggCats_,fitStatus,&gofProb);
 
 						if ((prob < upperEnvThreshold) ) { // Looser requirements for the envelope
-
-							if (gofProb > 0.01 || order == truthOrder ) {  // Good looking fit or one of our regular truth functions
-
+						  if ( (gofProb > 0.01 || order == truthOrder) && order < 6 ) {  // Good looking fit or one of our regular truth functions
 								std::cout << "[INFO] Adding to Envelope " << bkgPdf->GetName() << " "<< gofProb 
 									<< " 2xNLL + c is " << myNll + bkgPdf->getVariables()->getSize() <<  std::endl;
 								allPdfs.insert(pair<string,RooAbsPdf*>(Form("%s%d",funcType->c_str(),order),bkgPdf));
