@@ -112,13 +112,15 @@ theory_systematics = [
 
 experimental_systematics = [
                 # Updated luminosity partial-correlation scheme
-                {'name':'lumi_13TeV_Uncorrelated','title':'lumi_13TeV_Uncorrelated','type':'constant','prior':'lnN','correlateAcrossYears':0,'value':{'2016_preVFP':'1.022','2016_postVFP':'1.022','2016':'1.022','2017':'1.020','2018':'1.015'}}, #FIemmi: added keys for pre and post VFP. Actual values of uncertainties are to be checked
-                {'name':'lumi_13TeV_X_Y_Factorization','title':'lumi_13TeV_X_Y_Factorization','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.009','2016_postVFP':'1.009','2016':'1.009','2017':'1.008','2018':'1.020'}},
-                {'name':'lumi_13TeV_Length_Scale','title':'lumi_13TeV_Length_Scale','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'-','2016_postVFP':'-','2016':'-','2017':'1.003','2018':'1.002'}},
-                {'name':'lumi_13TeV_Beam_Beam_Deflection','title':'lumi_13TeV_Beam_Beam_Deflection','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.004','2016_postVFP':'1.004','2016':'1.004','2017':'1.004','2018':'-'}},
-                {'name':'lumi_13TeV_Dynamic_Beta','title':'lumi_13TeV_Dynamic_Beta','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.005','2016_postVFP':'1.005','2016':'1.005','2017':'1.005','2018':'-'}},
-                {'name':'lumi_13TeV_Beam_Current_Calibration','title':'lumi_13TeV_Beam_Current_Calibration','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'-','2016_postVFP':'-','2016':'-','2017':'1.003','2018':'1.002'}},
-                {'name':'lumi_13TeV_Ghosts_And_Satellites','title':'lumi_13TeV_Ghosts_And_Satellites','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.004','2016_postVFP':'1.004','2016':'1.004','2017':'1.001','2018':'-'}},
+                {'name':'lumi_13TeV_Uncorrelated','title':'lumi_13TeV_Uncorrelated','type':'constant','prior':'lnN','correlateAcrossYears':0,'value':{'2016_preVFP':'1.010','2016_postVFP':'1.010','2016':'1.010','2017':'1.020','2018':'1.015'}}, #FIemmi: added keys for pre and post VFP.
+                {'name':'lumi_13TeV_Correlated','title':'lumi_13TeV_Correlated','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.006','2016_postVFP':'1.006','2016':'1.006','2017':'1.009','2018':'1.020'}},
+                {'name':'lumi_13TeV_Correlated_1718','title':'lumi_13TeV_Correlated_1718','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'-','2016_postVFP':'-','2016':'-','2017':'1.006','2018':'1.002'}},
+                #{'name':'lumi_13TeV_X_Y_Factorization','title':'lumi_13TeV_X_Y_Factorization','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.009','2016_postVFP':'1.009','2016':'1.009','2017':'1.008','2018':'1.020'}},
+                #{'name':'lumi_13TeV_Length_Scale','title':'lumi_13TeV_Length_Scale','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'-','2016_postVFP':'-','2016':'-','2017':'1.003','2018':'1.002'}},
+                #{'name':'lumi_13TeV_Beam_Beam_Deflection','title':'lumi_13TeV_Beam_Beam_Deflection','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.004','2016_postVFP':'1.004','2016':'1.004','2017':'1.004','2018':'-'}},
+                #{'name':'lumi_13TeV_Dynamic_Beta','title':'lumi_13TeV_Dynamic_Beta','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.005','2016_postVFP':'1.005','2016':'1.005','2017':'1.005','2018':'-'}},
+                #{'name':'lumi_13TeV_Beam_Current_Calibration','title':'lumi_13TeV_Beam_Current_Calibration','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'-','2016_postVFP':'-','2016':'-','2017':'1.003','2018':'1.002'}},
+                #{'name':'lumi_13TeV_Ghosts_And_Satellites','title':'lumi_13TeV_Ghosts_And_Satellites','type':'constant','prior':'lnN','correlateAcrossYears':-1,'value':{'2016_preVFP':'1.004','2016_postVFP':'1.004','2016':'1.004','2017':'1.001','2018':'-'}},
                 {'name':'LooseMvaSF','title':'CMS_hgg_LooseMvaSF','type':'factory','prior':'lnN','correlateAcrossYears':0},
                 {'name':'PreselSF','title':'CMS_hgg_PreselSF','type':'factory','prior':'lnN','correlateAcrossYears':1},
                 {'name':'electronVetoSF','title':'CMS_hgg_electronVetoSF','type':'factory','prior':'lnN','correlateAcrossYears':0},
@@ -163,8 +165,8 @@ experimental_systematics = [
 
 signal_shape_systematics = [
                 {'name':'deltafracright','title':'deltafracright','type':'signal_shape','mode':'other','mean':'0.0','sigma':'0.02'},
-                {'name':'NonLinearity','title':'NonLinearity','type':'signal_shape','mode':'scalesGlobal','mean':'0.0','sigma':'0.002'},
-                {'name':'Geant4','title':'Geant4','type':'signal_shape','mode':'scalesGlobal','mean':'0.0','sigma':'0.0005'},
+                {'name':'NonLinearity','title':'NonLinearity','type':'signal_shape','mode':'scalesGlobal','mean':'0.0','sigma':'0.0005'},
+                {'name':'Geant4','title':'Geant4','type':'signal_shape','mode':'scalesGlobal','mean':'0.0','sigma':'0.0000005'},
                 {'name':'HighR9EB','title':'HighR9EB','type':'signal_shape','mode':'scales','mean':'0.0','sigma':'1.0'},
                 {'name':'HighR9EE','title':'HighR9EE','type':'signal_shape','mode':'scales','mean':'0.0','sigma':'1.0'},
                 {'name':'LowR9EB','title':'LowR9EB','type':'signal_shape','mode':'scales','mean':'0.0','sigma':'1.0'},
@@ -178,12 +180,14 @@ signal_shape_systematics = [
                 {'name':'MaterialForward','title':'MaterialForward','type':'signal_shape','mode':'scalesCorr','mean':'0.0','sigma':'1.0'},
                 {'name':'FNUFEE','title':'FNUFEE','type':'signal_shape','mode':'scalesCorr','mean':'0.0','sigma':'1.0'},
                 {'name':'FNUFEB','title':'FNUFEB','type':'signal_shape','mode':'scalesCorr','mean':'0.0','sigma':'1.0'},
-                {'name':'HighR9EBPhi','title':'HighR9EBPhi','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
+                {'name':'Gain1EB','title':'Gain1EB','type':'signal_shape','mode':'scales','mean':'0.0','sigma':'1.0'},
+                {'name':'Gain6EB','title':'Gain6EB','type':'signal_shape','mode':'scales','mean':'0.0','sigma':'1.0'},
+                #{'name':'HighR9EBPhi','title':'HighR9EBPhi','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
                 {'name':'HighR9EBRho','title':'HighR9EBRho','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
-                {'name':'HighR9EEPhi','title':'HighR9EEPhi','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
+                #{'name':'HighR9EEPhi','title':'HighR9EEPhi','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
                 {'name':'HighR9EERho','title':'HighR9EERho','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
-                {'name':'LowR9EBPhi','title':'LowR9EBPhi','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
+                #{'name':'LowR9EBPhi','title':'LowR9EBPhi','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
                 {'name':'LowR9EBRho','title':'LowR9EBRho','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
-                {'name':'LowR9EEPhi','title':'LowR9EEPhi','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
+                #{'name':'LowR9EEPhi','title':'LowR9EEPhi','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'},
                 {'name':'LowR9EERho','title':'LowR9EERho','type':'signal_shape','mode':'smears','mean':'0.0','sigma':'1.0'}
               ]
