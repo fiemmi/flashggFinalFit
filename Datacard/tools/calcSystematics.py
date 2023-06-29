@@ -42,7 +42,8 @@ def addConstantSyst(sd,_syst,options):
 
 def getValueFromJson(row,uncertainties,sname):
   # uncertainties is a dict of the form proc:{sname:X}
-  p = re.sub("_2016_%s"%decayMode,"",row['proc'])
+  p = re.sub("_2016_preVFP_%s"%decayMode,"",row['proc'])
+  p = re.sub("_2016_postVFP_%s"%decayMode,"",p)
   p = re.sub("_2017_%s"%decayMode,"",p)
   p = re.sub("_2018_%s"%decayMode,"",p)
   if p in uncertainties: 
